@@ -8,15 +8,17 @@
    cd SubsTracker
       ```
 
-2. **Set up the configuration**  
-  Create an  ```appsettings.json``` file in the root of your project. Add your bot token to this file. Here is an example of the content:
+2. **First run configuration**  
+  On the first run, the bot will automatically generate the ```appsettings.json``` file if it is missing.
+  The bot will prompt you to input your Telegram Bot Token during startup.  
+  The token will be saved in the generated appsettings.json file for future use.  
    ```bash
      {
       "TelegramBot": {
           "Token": "YOUR_BOT_TOKEN"
       }
    ```
-3. **Build and run the project**
+4. **Build and run the project**
    Run the following commands to build and start the bot:
    ```bash
    dotnet build
@@ -58,3 +60,4 @@ If you encounter any issues or have feature requests, feel free to create an [is
 | Date       | Version | Change Description                         |
 |------------|---------|---------------------------------------------|
 | 2024-11-19 | 0.1.0   | Initial bot setup and configuration added.   |
+| 2024-11-20 | 0.1.1   | Added automatic ```appsettings.json``` generation and token prompt.   |

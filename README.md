@@ -35,7 +35,7 @@
 
 ## Requirements
 The following tools, libraries, and frameworks are required to run the project:  
-- **.NET 6.0**.  
+- **.NET 8.0+**.  
 - **Entity Framework Core**.  
 - **Telegram.Bot**.  
 

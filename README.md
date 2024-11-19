@@ -49,7 +49,7 @@ The ```appsettings.json``` file contains sensitive information like your bot tok
 Never share or push this file with real credentials to GitHub.
 
 ## License  
-This project is licensed under the GNU General Public License v3.0. See the [LICENSE](https://github.com/all-licenses/GNU-General-Public-License-v3.0) file for more details.
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/anacesh/SubsTracker/blob/master/LICENSE) file for more details.
 
 ## Support
 If you encounter any issues or have feature requests, feel free to create an [issue](https://github.com/anacesh/SubsTracker/issues) in the repository.

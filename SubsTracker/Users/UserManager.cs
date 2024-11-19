@@ -11,7 +11,7 @@ namespace SubsTracker.Users
     internal class UserManager
     {
         private static UserManager instance;
-        public static UserManager GetInstance()
+        public static UserManager Instance()
         {
             if (instance == null)
                 instance = new UserManager();

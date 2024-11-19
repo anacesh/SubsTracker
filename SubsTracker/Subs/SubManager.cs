@@ -10,7 +10,7 @@ namespace SubsTracker.Subs
     internal class SubManager
     {
         private static SubManager _instance;
-        public static SubManager GetInstance()
+        public static SubManager Instance()
         {
             if (_instance == null)
                 _instance = new SubManager();

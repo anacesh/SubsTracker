@@ -1,16 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SubsTracker.Bot;
 
-namespace SubsTracker.Bot
+namespace SubsTracker
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var botConfig = BotConfig.Instance;
-            Console.WriteLine($"Token: {botConfig.Token}");
-
-
+            BotConfig botConfig = BotConfig.Instance;
+            BotManager botManager = BotManager.Instance;
+            await botManager.StartAsync();
+            Console.ReadLine();
         }
     }
 }

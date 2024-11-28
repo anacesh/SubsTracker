@@ -50,23 +50,29 @@ namespace SubsTracker.Bot
                         (u => u.Id == fromUser.Id.ToString(),
                         cancellationToken);
 
-                    Console.WriteLine("username: " + update.Message.From.Username);
+                    Console.WriteLine("username: " + update.Message.From.FirstName);
 
                     if (existringUser == null)
                     {
                         Console.WriteLine("Новый пользователь!");
                         var user = new Users.User(
-                            username: update.Message.From.Username ?? "User",
+                            username: update.Message.From.FirstName ?? "User",
                             id: update.Message.From.Id.ToString()
                         );
 
                         _dbContext.Users.Add(user);
                         await _dbContext.SaveChangesAsync(cancellationToken);
                     }
+                    else if (existringUser.UserName != update.Message.From.FirstName)
+                    {
+                        existringUser.UserName = update.Message.From.FirstName;
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                        Console.WriteLine("Новое имя пользователя");
+                    }
 
                     await botClient.SendTextMessageAsync(
                         chatId: update.Message.Chat.Id,
-                        text: $"Hello, @{fromUser.Username ?? "User"}! Your account was successfully created.",
+                        text: $"Hello, {existringUser.UserName ?? "User"}! Your account was successfully created.",
                         cancellationToken: cancellationToken
                     );
                 }

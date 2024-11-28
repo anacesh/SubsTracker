@@ -26,7 +26,9 @@ namespace SubsTracker
             var botManager = scope.ServiceProvider.GetRequiredService<BotManager>();
 
             await botManager.StartAsync();
-            Console.ReadLine();
+
+            while (true)
+                Console.ReadLine();
         }
     }
 }

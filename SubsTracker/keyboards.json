@@ -1,0 +1,93 @@
+{
+  "user_main_keyboard": {
+    "keyboard": [
+      [
+        {
+          "text": "Мои подписки",
+          "callback_data": "my_subscriptions"
+        }
+      ],
+      [
+        {
+          "text": "Добавить подписку",
+          "callback_data": "add_subscription"
+        }
+      ],
+      [
+        {
+          "text": "Помощь",
+          "callback_data": "help"
+        }
+      ]
+    ],
+    "resize_keyboard": true,
+    "one_time_keyboard": false
+  },
+
+  "user_subscription_keyboard": {
+    "keyboard": [
+      [
+        {
+          "text": "Изменить стоимость",
+          "callback_data": "change_subscription_price"
+        },
+        {
+          "text": "Изменить описание",
+          "callback_data": "change_subscription_description"
+        }
+      ],
+      [
+        {
+          "text": "Удалить подписку",
+          "callback_data": "delete_subscription"
+        }
+      ],
+      [
+        {
+          "text": "Назад",
+          "callback_data": "back_to_user_main"
+        }
+      ]
+    ],
+    "resize_keyboard": true,
+    "one_time_keyboard": false
+  },
+
+  "admin_main_keyboard": {
+    "keyboard": [
+      [
+        {
+          "text": "Просмотреть всех пользователей",
+          "callback_data": "view_all_users"
+        }
+      ],
+      [
+        {
+          "text": "Помощь",
+          "callback_data": "help"
+        }
+      ]
+    ],
+    "resize_keyboard": true,
+    "one_time_keyboard": false
+  },
+
+  "admin_user_management_keyboard": {
+    "keyboard": [
+      [
+        {
+          "text": "Удалить пользователя",
+          "callback_data": "delete_user"
+        }
+      ],
+      [
+        {
+          "text": "Назад",
+          "callback_data": "back_to_admin_main"
+        }
+      ]
+    ],
+    "resize_keyboard": true,
+    "one_time_keyboard": false
+  }
+}

@@ -1,30 +1,22 @@
 ﻿using SubsTracker.Subs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SubsTracker.Users
 {
-    internal class User
+    public class User
     {
-        public bool IsAdmin { get; }
-        public string UserName { get; }
-        public string? Password { get; }
-        public long id { get; }
-        private ISub[] subs;
+        public string Id { get; set; }
+        public bool IsAdmin { get; set; }
+        public string? UserName { get; set; } = string.Empty;
+        public string? Password { get; } = string.Empty;
+        public ICollection<Sub> Subs { get; set; } = new List<Sub>();
 
-        public User(string username, long id, bool isAdmin)
+        public User(string? username, string id, bool isAdmin = false)
         {
             this.UserName = username;
-            this.id = id;
+            this.Id = id;
             this.IsAdmin = isAdmin;
         }
 
-        public ISub[] GetSubs()
-        {
-            return subs;
-        }
+        private User() { }
     }
 }

@@ -1,11 +1,4 @@
-﻿using SubsTracker.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SubsTracker.Subs
+﻿namespace SubsTracker.Subs
 {
     internal class SubManager
     {

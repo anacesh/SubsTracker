@@ -1,10 +1,4 @@
-﻿using SubsTracker.Subs;
-using SubsTracker.Logs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SubsTracker.Logs;
 
 namespace SubsTracker.Users
 {
@@ -19,7 +13,7 @@ namespace SubsTracker.Users
         }
         private UserManager() { }
 
-        public bool CreateNewUser(string username, string password, long id, bool isAdmin = false)
+        public bool CreateNewUser(string username, string password, string id, bool isAdmin = false)
         {
             try
             {

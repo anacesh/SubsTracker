@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SubsTracker.Subs
+﻿namespace SubsTracker.Subs
 {
-    internal class Sub : ISub
+    public class Sub : ISub
     {
-        public int id {  get; set; }
-        public string Name { get; }
-        public string Description { get; }
-        public float Sum { get; }
-        public string Link { get; }
-        public Sub(string name, string description, float sub, string link, int id)
+        public string Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public float Sum { get; set; }
+        public string Link { get; set; } = string.Empty;
+        public Sub(string name, string description, float sub, string link, string id)
         {
             this.Name = name;
             this.Description = description;
             this.Sum = sub;
             this.Link = link;
-            this.id = id;
+            this.Id = id;
         }
+
+        private Sub() { }
     }
 }

@@ -1,106 +1,92 @@
-﻿using SubsTracker.Subs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
-using System.Threading;
-using static Telegram.Bot.TelegramBotClient;
 using Telegram.Bot.Exceptions;
+using SubsTracker.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 
 namespace SubsTracker.Bot
 {
     class BotManager
     {
         private readonly TelegramBotClient _bot;
-        private static BotManager _instance;
-        private CancellationTokenSource cts;
+        private readonly AppDbContext _dbContext;
+        private readonly CancellationTokenSource _cts;
 
-        public static BotManager Instance
+        public BotManager(AppDbContext dbContext, BotConfig botConfig)
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new BotManager();
-                }
-                return _instance;
-            }
-        }
-
-        private BotManager()
-        {
-            cts = new CancellationTokenSource();
-            _bot = new TelegramBotClient(token: BotConfig.Instance.Token, cancellationToken: cts.Token);
+            _dbContext = dbContext;
+            _cts = new CancellationTokenSource();
+            _bot = new TelegramBotClient(token: botConfig.Token, cancellationToken: _cts.Token);
         }
 
         public async Task StartAsync()
         {
             var me = await _bot.GetMeAsync();
-            Console.WriteLine($"@{me.Username} is running... Press Escape to terminate");
-            ReceiverOptions _receiverOptions;
-            _receiverOptions = new ReceiverOptions
+            Console.WriteLine($"@{me.Username} is running... Press Enter to terminate");
+
+            var receiverOptions = new ReceiverOptions
             {
-                AllowedUpdates = new[]
-                {
-                    UpdateType.Message,
-                },
+                AllowedUpdates = Array.Empty<UpdateType>(),
             };
 
-            _bot.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
+            _bot.StartReceiving(UpdateHandler, ErrorHandler, receiverOptions, _cts.Token);
         }
 
-        private static async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        private async Task UpdateHandler(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             try
             {
-                switch (update.Type)
+                if (update.Type == UpdateType.Message && update.Message?.Text != null)
                 {
-                    case UpdateType.Message:
-                        {
-                            Console.WriteLine("Pong!");
-                            break;
-                        }
-                    default:
-                        {
-                            break;
-                        }
+                    var fromUser = update.Message.From;
+                    if (fromUser == null) return;
+
+                    //Console.WriteLine($"Received message: {update.Message.Text}");
+
+                    var existringUser = await _dbContext.Users.FirstOrDefaultAsync
+                        (u => u.Id == fromUser.Id.ToString(),
+                        cancellationToken);
+
+                    Console.WriteLine("username: " + update.Message.From.Username);
+
+                    if (existringUser == null)
+                    {
+                        Console.WriteLine("Новый пользователь!");
+                        var user = new Users.User(
+                            username: update.Message.From.Username ?? "User",
+                            id: update.Message.From.Id.ToString()
+                        );
+
+                        _dbContext.Users.Add(user);
+                        await _dbContext.SaveChangesAsync(cancellationToken);
+                    }
+
+                    await botClient.SendTextMessageAsync(
+                        chatId: update.Message.Chat.Id,
+                        text: $"Hello, @{fromUser.Username ?? "User"}! Your account was successfully created.",
+                        cancellationToken: cancellationToken
+                    );
                 }
             }
             catch (Exception ex)
             {
-                Logs.TrackExceptions.TrackException(ex.ToString());
+                Console.WriteLine($"Error occurred: {ex.Message}");
             }
         }
 
-        private static Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)
+        private Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)
         {
-            var ErrorMessage = error switch
-            {
-                ApiRequestException apiRequestException
-                    => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-                _ => error.ToString()
-            };
-
-            Logs.TrackExceptions.TrackException(ErrorMessage);
+            Console.WriteLine($"An error occurred: {error.Message}");
             return Task.CompletedTask;
         }
 
         public void StopBot()
         {
+            _cts.Cancel();
             Console.WriteLine("Bot stopped.");
-        }
-
-        public void RestartBot()
-        {
-            StopBot();
-            StartAsync();
         }
     }
 }

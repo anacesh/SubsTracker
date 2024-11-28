@@ -1,29 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Xml;
 using Newtonsoft.Json;
-using static System.Net.Mime.MediaTypeNames;
+using SubsTracker.Data;
+using Telegram.Bot;
 
 namespace SubsTracker.Bot
 {
     public class BotConfig
     {
         public string Token { get; set; }
-
-        private static BotConfig _instance;
-        private BotConfig() { }
-
-        public static BotConfig Instance
+        public BotConfig()
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new BotConfig();
-                    _instance.LoadConfig();
-                }
-                return _instance;
-            }
+            LoadConfig();
         }
 
         private void LoadConfig()

@@ -43,17 +43,18 @@ namespace SubsTracker.Bot
                     var fromUser = update.Message.From;
                     if (fromUser == null) return;
 
-                    TrackExceptions.SendDebugMessage($"Received message: {update.Message.Text}");
+                    TrackExceptions.SendDebugMessage($"Received message: {update.Message.Text}", "new_message");
+
 
                     var existringUser = await _dbContext.Users.FirstOrDefaultAsync
                         (u => u.Id == fromUser.Id.ToString(),
                         cancellationToken);
 
-                    TrackExceptions.SendDebugMessage("username: " + update.Message.From.FirstName);
+                    TrackExceptions.SendDebugMessage("username: " + update.Message.From.FirstName, "new_message");
 
                     if (existringUser == null)
                     {
-                        TrackExceptions.SendDebugMessage("Новый пользователь!");
+                        TrackExceptions.SendDebugMessage("new User", "new_user");
                         var user = new Users.User(
                             username: update.Message.From.FirstName ?? "User",
                             id: update.Message.From.Id.ToString()
@@ -68,8 +69,12 @@ namespace SubsTracker.Bot
                     {
                         existringUser.UserName = update.Message.From.FirstName;
                         await _dbContext.SaveChangesAsync(cancellationToken);
-                        TrackExceptions.SendDebugMessage("Новое имя пользователя");
+                        TrackExceptions.SendDebugMessage("Новое имя пользователя", "user_info");
                     }
+                    
+                    TrackExceptions.SendDebugMessage($"username: {existringUser.UserName}," +
+                        $" id: {existringUser.Id}," +
+                        $" state: {existringUser.State}","user_info");
 
                     await botClient.SendMessage(
                         chatId: update.Message.Chat.Id,

@@ -2,10 +2,9 @@
 using Telegram.Bot.Types;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Exceptions;
 using SubsTracker.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Net.WebSockets;
+using SubsTracker.Tracker;
 
 namespace SubsTracker.Bot
 {
@@ -24,8 +23,8 @@ namespace SubsTracker.Bot
 
         public async Task StartAsync()
         {
-            var me = await _bot.GetMeAsync();
-            Console.WriteLine($"@{me.Username} is running... Press Enter to terminate");
+            var me = await _bot.GetMe();
+            TrackExceptions.SendBotMessage($"@{me.Username} is running... Press Enter to terminate");
 
             var receiverOptions = new ReceiverOptions
             {
@@ -44,17 +43,17 @@ namespace SubsTracker.Bot
                     var fromUser = update.Message.From;
                     if (fromUser == null) return;
 
-                    //Console.WriteLine($"Received message: {update.Message.Text}");
+                    TrackExceptions.SendDebugMessage($"Received message: {update.Message.Text}");
 
                     var existringUser = await _dbContext.Users.FirstOrDefaultAsync
                         (u => u.Id == fromUser.Id.ToString(),
                         cancellationToken);
 
-                    Console.WriteLine("username: " + update.Message.From.FirstName);
+                    TrackExceptions.SendDebugMessage("username: " + update.Message.From.FirstName);
 
                     if (existringUser == null)
                     {
-                        Console.WriteLine("Новый пользователь!");
+                        TrackExceptions.SendDebugMessage("Новый пользователь!");
                         var user = new Users.User(
                             username: update.Message.From.FirstName ?? "User",
                             id: update.Message.From.Id.ToString()
@@ -62,15 +61,17 @@ namespace SubsTracker.Bot
 
                         _dbContext.Users.Add(user);
                         await _dbContext.SaveChangesAsync(cancellationToken);
+
+                        existringUser = user;
                     }
                     else if (existringUser.UserName != update.Message.From.FirstName)
                     {
                         existringUser.UserName = update.Message.From.FirstName;
                         await _dbContext.SaveChangesAsync(cancellationToken);
-                        Console.WriteLine("Новое имя пользователя");
+                        TrackExceptions.SendDebugMessage("Новое имя пользователя");
                     }
 
-                    await botClient.SendTextMessageAsync(
+                    await botClient.SendMessage(
                         chatId: update.Message.Chat.Id,
                         text: $"Hello, {existringUser.UserName ?? "User"}! Your account was successfully created.",
                         cancellationToken: cancellationToken
@@ -79,20 +80,20 @@ namespace SubsTracker.Bot
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error occurred: {ex.Message}");
+                TrackExceptions.TrackException(ex.Message);
             }
         }
 
         private Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"An error occurred: {error.Message}");
+            TrackExceptions.TrackException(error.Message);
             return Task.CompletedTask;
         }
 
         public void StopBot()
         {
             _cts.Cancel();
-            Console.WriteLine("Bot stopped.");
+            TrackExceptions.TrackException("Bot stopped.");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SubsTracker.Subs
 {
-    public class Sub : ISub
+    public class Sub
     {
         public string Id { get; set; }
         public string Name { get; set; } = string.Empty;

@@ -3,7 +3,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SubsTracker.Data;
 using SubsTracker.Bot;
-using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace SubsTracker
 {
@@ -14,10 +15,15 @@ namespace SubsTracker
             var host = Host.CreateDefaultBuilder(args)
                             .ConfigureServices((context, services) =>
                             {
-                                services.AddDbContext<AppDbContext>(options =>
-                                    options.UseSqlite("Data Source=bot.db"));
+                                services.AddDbContext<AppDbContext>((options) =>
+                                {
+                                    options.UseSqlite("Data Source=bot.db");
+                                    options.UseLoggerFactory(LoggerFactory.
+                                        Create(builder => builder.
+                                            AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning)));
+                                });
 
-                                services.AddScoped<BotManager>();
+                                services.AddSingleton<BotManager>();
                                 services.AddSingleton<BotConfig>();
                             })
                             .Build();

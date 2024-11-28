@@ -22,6 +22,10 @@ namespace SubsTracker.Data
                 .HasMany(u => u.Subs)
                 .WithOne()
                 .HasForeignKey("UserId");
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.State)
+                .HasConversion<string>();
         }
     }
 }

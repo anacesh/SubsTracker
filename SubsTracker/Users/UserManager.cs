@@ -1,4 +1,4 @@
-﻿using SubsTracker.Logs;
+﻿using SubsTracker.Tracker;
 
 namespace SubsTracker.Users
 {
